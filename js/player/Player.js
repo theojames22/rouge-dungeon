@@ -72,6 +72,31 @@ export class Player {
     }
 
     /**
+     * Explicit attack in facing direction (spacing) - does not move
+     * Returns true if an enemy was hit
+     */
+    attackInDirection() {
+        if (!this.game?.dungeon || !this.game?.combat) return false;
+
+        const dirOffset = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+        const [dx, dy] = dirOffset[this.facing] || [0, 1];
+        const targetX = Math.round(this.x + dx);
+        const targetY = Math.round(this.y + dy);
+
+        const enemy = this.game.dungeon.enemies.find(e =>
+            !e.isDead && Math.round(e.x) === targetX && Math.round(e.y) === targetY
+        );
+
+        if (enemy) {
+            this.attack(enemy);
+            return true;
+        }
+
+        this.game.combat.log("You swing at empty air...");
+        return false;
+    }
+
+    /**
      * Whirlwind / Area Attack ability using Mana
      */
     useSpecialAbility() {
@@ -82,6 +107,7 @@ export class Player {
         }
 
         this.game?.combat?.log("Whirlwind attack unleashed!");
+        this.game?.sound?.playSpecialAbility();
         this.game?.particles?.emitNova(this.x, this.y, '#38bdf8', 24);
         this.game?.combat?.resolveAreaAttack(this, 1.8);
         return true;
@@ -111,6 +137,7 @@ export class Player {
 
         if (result.leveledUp) {
             this.game?.combat?.log(`LEVEL UP! Now Level ${result.newLevel}!`);
+            this.game?.sound?.playLevelUp();
             this.game?.particles?.emitNova(this.x, this.y, '#fbbf24', 30);
             this.game?.renderer?.addFloatingText(`LEVEL UP!`, this.x, this.y - 0.5, '#fbbf24');
         }
@@ -137,6 +164,7 @@ export class Player {
         for (const entry of items) {
             if (this.inventory.addItem(entry.item)) {
                 dungeon.removeItem(entry.item);
+                this.game?.sound?.playPickup();
                 this.game?.combat?.log(`Picked up ${entry.item.name}!`);
                 this.game?.renderer?.addFloatingText(`+${entry.item.name}`, newX, newY, '#34d399');
             }

@@ -22,6 +22,7 @@ export class Menu {
     _setupListeners() {
         if (this.startBtn) {
             this.startBtn.addEventListener('click', () => {
+                console.log("Start Game button clicked");
                 this.close();
                 this.game.startNewGame(this.selectedClass);
             });

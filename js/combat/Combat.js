@@ -34,11 +34,20 @@ export class Combat {
             defender.onDodge?.();
             this.log(`${defender.name} dodged ${attacker.name}'s attack!`);
             this.game?.renderer?.addFloatingText('MISS', defender.x, defender.y, '#9ca3af');
+            this.game?.sound?.playEnemyHit();
             return result;
         }
 
         // Apply damage
         defender.takeDamage(result.finalDamage);
+
+        // Sound effects
+        const isPlayerAttacking = attacker === this.game?.player;
+        if (isPlayerAttacking) {
+            this.game?.sound?.playPlayerAttack(result.isCrit);
+        } else {
+            this.game?.sound?.playEnemyHit();
+        }
 
         // Feedback: Floating damage text & particles
         const color = result.isCrit ? '#ef4444' : '#f59e0b';
@@ -54,6 +63,11 @@ export class Combat {
         // Death check
         if (defender.isDead) {
             this.log(`${defender.name} was defeated!`);
+            if (isPlayerAttacking) {
+                this.game?.sound?.playEnemyDeath();
+            } else {
+                this.game?.sound?.playPlayerDeath();
+            }
             attacker.onKillTarget?.(defender);
         }
 

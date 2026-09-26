@@ -103,6 +103,7 @@ export class Enemy {
 
     attack(player) {
         if (!player || player.isDead) return;
+        player.game?.sound?.playPlayerHit();
         player.game?.combat?.resolveAttack(this, player);
     }
 

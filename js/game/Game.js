@@ -17,6 +17,8 @@ import { Boss } from '../enemies/Boss.js';
 import { Random } from '../systems/Random.js';
 import { Potion } from '../items/Potion.js';
 import { WeaponItem } from '../items/WeaponItem.js';
+import { AudioManager } from '../audio/AudioManager.js';
+import { SoundManager } from '../audio/SoundManager.js';
 
 /**
  * Main Game Coordinator
@@ -29,6 +31,7 @@ export class Game {
         this.particles = new Particles();
         this.renderer = new Renderer(this.canvas, this.camera);
         this.combat = new Combat(this);
+        this.sound = new SoundManager();
         this.state = new GameState(States.MENU);
 
         this.dungeon = null;
@@ -47,8 +50,26 @@ export class Game {
             () => this.render()
         );
 
+        try {
+            this.music = new AudioManager('assets/audio/music/Steel_Against_the_Dark.mp3', 0.12);
+            this._setupAudioAutoPlay();
+        } catch (e) {
+            console.error("Audio initialization failed:", e);
+        }
+
         this._setupKeyboardShortcuts();
     }
+
+    _setupAudioAutoPlay() {
+        const startAudio = () => {
+            if (this.music) this.music.play();
+            window.removeEventListener('click', startAudio);
+            window.removeEventListener('keydown', startAudio);
+        };
+        window.addEventListener('click', startAudio);
+        window.addEventListener('keydown', startAudio);
+    }
+
 
     get isGameRunning() {
         return this.state.is(States.PLAYING);
@@ -62,11 +83,21 @@ export class Game {
                     this.tryDescendFloor();
                 }
             }
-            // E for special ability
+            // E for special ability (Whirlwind)
             if (e.code === 'KeyE') {
                 if (this.state.is(States.PLAYING) && this.player) {
                     this.player.useSpecialAbility();
                 }
+            }
+            // M to toggle sound
+            if (e.code === 'KeyM') {
+                this.sound?.setEnabled(!this.sound?.enabled);
+                this.combat?.log(this.sound?.enabled ? 'Sound: ON' : 'Sound: OFF');
+            }
+            // Shift / Space (when not on stairs) for explicit attack/spacing
+            if ((e.code === 'ShiftLeft' || e.code === 'ShiftRight') && this.state.is(States.PLAYING) && this.player) {
+                e.preventDefault();
+                this.player.attackInDirection();
             }
         });
     }
@@ -213,6 +244,7 @@ export class Game {
         this.dungeon.computeFOV(this.player.x, this.player.y, this.player.visionRadius);
         this.camera.follow(this.player.x, this.player.y);
 
+        this.sound?.playDescend();
         this.combat.log(`Descended to Floor B${this.currentFloor}F! The air grows colder...`);
         this.renderer.addFloatingText(`FLOOR B${this.currentFloor}F`, this.player.x, this.player.y, '#38bdf8');
         this.hud.update();
