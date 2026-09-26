@@ -1,0 +1,172 @@
+/* ==========================================================================
+   Base Styles & Design System Tokens
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Outfit:wght@300;400;500;600;700&family=Press+Start+2P&display=swap');
+
+:root {
+    /* Color Palette */
+    --color-bg-abyss: #07090e;
+    --color-bg-surface: rgba(15, 23, 42, 0.85);
+    --color-bg-surface-hover: rgba(30, 41, 59, 0.9);
+    --color-border: rgba(255, 255, 255, 0.12);
+    --color-border-glow: rgba(56, 189, 248, 0.35);
+
+    --color-primary: #38bdf8;
+    --color-primary-hover: #7dd3fc;
+    --color-accent: #f59e0b;
+    --color-danger: #ef4444;
+    --color-success: #10b981;
+    --color-mana: #3b82f6;
+
+    /* Rarity Palette */
+    --rarity-common: #9ca3af;
+    --rarity-uncommon: #34d399;
+    --rarity-rare: #60a5fa;
+    --rarity-epic: #c084fc;
+    --rarity-legendary: #fbbf24;
+
+    /* Typography */
+    --font-heading: 'Cinzel', serif;
+    --font-body: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-pixel: 'Press Start 2P', monospace;
+
+    /* Elevation & Glassmorphism */
+    --glass-bg: rgba(15, 23, 42, 0.82);
+    --glass-blur: blur(14px);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.55);
+}
+
+canvas, img, .pixel-art {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body {
+    background-color: var(--color-bg-abyss);
+    color: #e2e8f0;
+    font-family: var(--font-body);
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Base Modal & Backdrop */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(3, 7, 18, 0.78);
+    backdrop-filter: var(--glass-blur);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.modal-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 14px;
+    padding: 2rem;
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Action Buttons */
+button {
+    font-family: var(--font-body);
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 8px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    box-shadow: 0 6px 20px rgba(2, 132, 199, 0.5);
+    transform: translateY(-2px);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: rgba(30, 41, 59, 0.8);
+    color: #cbd5e1;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+    background: rgba(51, 65, 85, 0.9);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 0.25rem 0.5rem;
+}
+
+.close-btn:hover {
+    color: #f1f5f9;
+}

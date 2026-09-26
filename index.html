@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Roguelike Dungeon - A procedural tactical dungeon crawler with real-time combat, equipment, level scaling, and deep depths.">
+    <title>Roguelike Dungeon: Depths of the Abyss</title>
+    
+    <!-- Design System & Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/game.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <main id="game-container">
+        <!-- Main HTML5 Canvas -->
+        <canvas id="game-canvas"></canvas>
+
+        <!-- Dynamic Game Heads-Up Display -->
+        <header id="game-hud">
+            <!-- Top Left: Dungeon Depth, Level, Gold -->
+            <section class="hud-stats-left">
+                <div class="hud-stat-pill floor" id="hud-floor-text">B1F</div>
+                <div class="hud-stat-pill level" id="hud-level-text">LVL 1</div>
+                <div class="hud-stat-pill gold" id="hud-gold-text">0 G</div>
+            </section>
+
+            <!-- Top Center: Health & Mana Vitals -->
+            <section class="hud-status-center">
+                <!-- Health Bar -->
+                <div class="bar-wrapper">
+                    <div id="hud-hp-fill" class="bar-fill hp-bar" style="width: 100%;"></div>
+                    <span id="hud-hp-text" class="bar-label">100 / 100</span>
+                </div>
+                <!-- Mana Bar -->
+                <div class="bar-wrapper">
+                    <div id="hud-mp-fill" class="bar-fill mp-bar" style="width: 100%;"></div>
+                    <span id="hud-mp-text" class="bar-label">50 / 50</span>
+                </div>
+                <!-- EXP Bar -->
+                <div class="bar-wrapper" style="height: 5px;">
+                    <div id="hud-exp-fill" class="bar-fill exp-bar" style="width: 0%;"></div>
+                </div>
+            </section>
+
+            <!-- Top Right: Equipped Weapon Indicator -->
+            <section class="hud-weapon-right">
+                <div>
+                    <div class="weapon-title">Main Hand</div>
+                    <div id="hud-weapon-name">Iron Shortsword</div>
+                </div>
+            </section>
+
+            <!-- Bottom Left: Minimap Radar -->
+            <section class="hud-bottom-left">
+                <div class="minimap-card">
+                    <canvas id="hud-minimap" width="140" height="105"></canvas>
+                </div>
+            </section>
+
+            <!-- Bottom Center: Quick Action Controls -->
+            <nav class="hud-actions-center">
+                <button id="btn-open-inventory" class="hud-btn" title="Open Inventory">
+                    <kbd>I</kbd> Backpack
+                </button>
+                <button id="btn-use-ability" class="hud-btn" title="Cast Whirlwind">
+                    <kbd>E</kbd> Whirlwind
+                </button>
+                <button id="btn-descend-stairs" class="hud-btn" title="Descend Stairs">
+                    <kbd>SPACE</kbd> Descend
+                </button>
+            </nav>
+
+            <!-- Bottom Right: Combat Log -->
+            <section class="hud-combat-log-container">
+                <div class="log-title">Expedition Log</div>
+                <div id="hud-combat-log"></div>
+            </section>
+        </header>
+
+        <!-- Main Menu & Class Select Modal -->
+        <section id="menu-modal" class="modal-overlay">
+            <div class="modal-card">
+                <h1 class="game-title">ROGUELIKE DUNGEON</h1>
+                <p class="game-subtitle">Depths of the Abyss</p>
+
+                <div class="class-selection">
+                    <div class="class-section-title">Select Your Archetype</div>
+                    <div class="class-grid">
+                        <div class="class-card selected" data-class="knight">
+                            <span class="class-icon">🛡️</span>
+                            <span class="class-name">Knight</span>
+                            <span class="class-perk">High armor, sturdy health pool, balanced blade skills</span>
+                        </div>
+                        <div class="class-card" data-class="rogue">
+                            <span class="class-icon">🗡️</span>
+                            <span class="class-name">Rogue</span>
+                            <span class="class-perk">Agile step, deadly critical strikes, high evasion</span>
+                        </div>
+                        <div class="class-card" data-class="mage">
+                            <span class="class-icon">🔮</span>
+                            <span class="class-name">Mage</span>
+                            <span class="class-perk">Vast mana pool, potent whirlwind spells and burst</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-actions">
+                    <button id="btn-start-game" class="btn-primary">Descend Into Dungeon</button>
+                    <button id="btn-resume-game" class="btn-secondary" style="display: none;">Resume Expedition</button>
+                    <button id="btn-show-controls" class="btn-secondary">Controls & Lore</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Inventory Modal -->
+        <section id="inventory-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <button id="inventory-close" class="close-btn" aria-label="Close inventory">&times;</button>
+                <div class="inventory-header">
+                    <h2>Adventurer's Backpack</h2>
+                </div>
+                <div class="inventory-body">
+                    <div id="inventory-grid"></div>
+                    <div id="inventory-details"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Game Over & Victory Modal -->
+        <section id="gameover-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <h2 id="gameover-title">YOU DIED</h2>
+                <p id="gameover-subtitle">Your soul remains trapped in the dark catacombs.</p>
+
+                <div id="gameover-stats"></div>
+
+                <button id="btn-restart-game" class="btn-primary">Embark On New Expedition</button>
+            </div>
+        </section>
+
+        <!-- Controls Guide Modal -->
+        <section id="controls-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <button id="btn-close-controls" class="close-btn" aria-label="Close controls guide">&times;</button>
+                <h2 class="controls-title">Expedition Controls</h2>
+                <table class="controls-table">
+                    <tbody>
+                        <tr><td>WASD / Arrow Keys</td><td>Move character & Bump into enemies to attack</td></tr>
+                        <tr><td>E</td><td>Cast Whirlwind Special Attack (Consumes Mana)</td></tr>
+                        <tr><td>Spacebar</td><td>Descend staircase when standing on (▼)</td></tr>
+                        <tr><td>I</td><td>Open / Close Inventory & Equipment backpack</td></tr>
+                        <tr><td>ESC</td><td>Pause game & Open Main Menu</td></tr>
+                    </tbody>
+                </table>
+                <button class="btn-secondary" onclick="document.getElementById('controls-modal').classList.add('hidden')">Got it</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- ES Module Main Script -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
