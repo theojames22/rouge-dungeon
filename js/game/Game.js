@@ -143,6 +143,7 @@ export class Game {
         this.dungeon.computeFOV(this.player.x, this.player.y, this.player.visionRadius);
 
         this.state.setState(States.PLAYING);
+        this.loop.resume();
         this.combat.log(`Entered Dungeon Floor B${this.currentFloor}F. Steel your resolve!`);
         this.hud.update();
     }
@@ -254,6 +255,12 @@ export class Game {
 
     resume() {
         this.loop.resume();
+    }
+
+    returnToMainMenu() {
+        this.state.setState(States.MENU);
+        this.loop.pause();
+        this.menuUI.open(false);
     }
 
     update(deltaTime) {

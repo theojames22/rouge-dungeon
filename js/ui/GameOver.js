@@ -4,7 +4,7 @@
  */
 export class GameOver {
     /**
-     * @param {Object} game 
+     * @param {Object} game
      */
     constructor(game) {
         this.game = game;
@@ -13,6 +13,7 @@ export class GameOver {
         this.subtitle = document.getElementById('gameover-subtitle');
         this.statsContainer = document.getElementById('gameover-stats');
         this.restartBtn = document.getElementById('btn-restart-game');
+        this.mainMenuBtn = document.getElementById('btn-main-menu');
         this.isOpen = false;
 
         this._setupListeners();
@@ -23,6 +24,12 @@ export class GameOver {
             this.restartBtn.addEventListener('click', () => {
                 this.close();
                 this.game.startNewGame();
+            });
+        }
+        if (this.mainMenuBtn) {
+            this.mainMenuBtn.addEventListener('click', () => {
+                this.close();
+                this.game.returnToMainMenu();
             });
         }
     }
