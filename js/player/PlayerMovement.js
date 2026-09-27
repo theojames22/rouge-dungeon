@@ -48,10 +48,10 @@ export class PlayerMovement {
             this.facing = 'down';
         } else if (this.keys['KeyA'] || this.keys['ArrowLeft']) {
             dx = -1;
-            this.facing = 'right';
+            this.facing = 'left';
         } else if (this.keys['KeyD'] || this.keys['ArrowRight']) {
             dx = 1;
-            this.facing = 'left';
+            this.facing = 'right';
         }
 
         if (dx !== 0 || dy !== 0) {
