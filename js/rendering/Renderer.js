@@ -372,9 +372,9 @@ export class Renderer {
         } else if (player.facing === 'up') {
             sprite = this.sprites.player_up;
         } else if (player.facing === 'left') {
-            sprite = this.sprites.player_left;
+            sprite = this.sprites.player_right;  // sprite names swapped: left key -> player_right.png
         } else if (player.facing === 'right') {
-            sprite = this.sprites.player_right;
+            sprite = this.sprites.player_left;   // sprite names swapped: right key -> player_left.png
         }
 
         if (sprite && sprite.complete) {
