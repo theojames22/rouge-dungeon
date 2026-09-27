@@ -75,6 +75,9 @@ export class Game {
                 if (this.state.is(States.PLAYING) && this.player) {
                     this.player.attackInDirection();
                 }
+                if ((e.code === 'ShiftLeft' || e.code === 'ShiftRight') && this.state.is(States.PLAYING)) {
+                this.tryDescendFloor();
+                }
             }
             // E for special ability (Whirlwind)
             if (e.code === 'KeyE') {
