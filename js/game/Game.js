@@ -75,9 +75,6 @@ export class Game {
                 if (this.state.is(States.PLAYING) && this.player) {
                     this.player.attackInDirection();
                 }
-                if ((e.code === 'ShiftLeft' || e.code === 'ShiftRight') && this.state.is(States.PLAYING)) {
-                this.tryDescendFloor();
-                }
             }
             // E for special ability (Whirlwind)
             if (e.code === 'KeyE') {
@@ -91,7 +88,7 @@ export class Game {
                 this.combat?.log(this.sound?.enabled ? 'Sound: ON' : 'Sound: OFF');
             }
             // Shift to descend stairs
-            if ((e.code === 'ShiftLeft' || e.code === 'ShiftRight') && this.state.is(States.PLAYING)) {
+            if ((e.code === 'Space' ) && this.state.is(States.PLAYING)) {
                 this.tryDescendFloor();
             }
         });
