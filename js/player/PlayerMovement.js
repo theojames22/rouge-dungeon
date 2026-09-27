@@ -58,15 +58,14 @@ export class PlayerMovement {
             const targetX = Math.round(this.player.x + dx);
             const targetY = Math.round(this.player.y + dy);
 
-            // Check if there is an enemy at the target tile (Bump Attack)
+            // Check if tile is walkable (enemies block movement)
             const enemy = dungeon.enemies.find(e => !e.isDead && Math.round(e.x) === targetX && Math.round(e.y) === targetY);
             if (enemy) {
-                this.player.attack(enemy);
+                // Enemy blocks movement - don't attack, just face them
                 this.lastMoveTime = now;
                 return;
             }
 
-            // Check if tile is walkable
             if (dungeon.isWalkable(targetX, targetY)) {
                 this.player.x = targetX;
                 this.player.y = targetY;

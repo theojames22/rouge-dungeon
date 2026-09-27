@@ -52,22 +52,14 @@ export class Game {
 
         try {
             this.music = new AudioManager('assets/audio/music/Steel_Against_the_Dark.mp3', 0.12);
-            this._setupAudioAutoPlay();
+            // Autoplay will be enabled on first user interaction
+            window.addEventListener('click', () => this.music?.enableAutoplay(), { once: true });
+            window.addEventListener('keydown', () => this.music?.enableAutoplay(), { once: true });
         } catch (e) {
             console.error("Audio initialization failed:", e);
         }
 
         this._setupKeyboardShortcuts();
-    }
-
-    _setupAudioAutoPlay() {
-        const startAudio = () => {
-            if (this.music) this.music.play();
-            window.removeEventListener('click', startAudio);
-            window.removeEventListener('keydown', startAudio);
-        };
-        window.addEventListener('click', startAudio);
-        window.addEventListener('keydown', startAudio);
     }
 
 
@@ -77,10 +69,11 @@ export class Game {
 
     _setupKeyboardShortcuts() {
         window.addEventListener('keydown', (e) => {
-            // Space to descend stairs or interact
+            // Space to attack in facing direction (explicit attack)
             if (e.code === 'Space') {
-                if (this.state.is(States.PLAYING)) {
-                    this.tryDescendFloor();
+                e.preventDefault();
+                if (this.state.is(States.PLAYING) && this.player) {
+                    this.player.attackInDirection();
                 }
             }
             // E for special ability (Whirlwind)
@@ -94,10 +87,9 @@ export class Game {
                 this.sound?.setEnabled(!this.sound?.enabled);
                 this.combat?.log(this.sound?.enabled ? 'Sound: ON' : 'Sound: OFF');
             }
-            // Shift / Space (when not on stairs) for explicit attack/spacing
-            if ((e.code === 'ShiftLeft' || e.code === 'ShiftRight') && this.state.is(States.PLAYING) && this.player) {
-                e.preventDefault();
-                this.player.attackInDirection();
+            // Shift to descend stairs
+            if ((e.code === 'ShiftLeft' || e.code === 'ShiftRight') && this.state.is(States.PLAYING)) {
+                this.tryDescendFloor();
             }
         });
     }
